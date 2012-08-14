@@ -1,0 +1,17 @@
+module Spree
+  class Calculator < ActiveRecord::Base
+    module Services
+      class SedexACobrarComContrato < Spree::Calculator::CorreiosBase::Base
+
+        def self.description
+          "Sedex a cobrar com contrato - 40126"
+        end
+        
+        def compute(order)
+          super(order, :sedex_a_cobrar_com_contrato)
+        end
+        
+      end
+    end
+  end
+end

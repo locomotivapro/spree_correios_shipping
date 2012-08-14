@@ -1,12 +1,8 @@
 module Spree
   class Calculator < ActiveRecord::Base
-    module Sedex
+    module CorreiosBase
       class Base < Calculator
-
-        def self.description
-          "sedex"
-        end
-
+        
         def available?(order)
           weight = order.line_items.inject(0) do |weight, line_item|
             weight + (line_item.variant.weight ? (line_item.quantity * line_item.variant.weight ) : 0)
@@ -14,7 +10,7 @@ module Spree
           weight > 30 ? false : true
         end
 
-        def compute(order)
+        def compute(order, service)
           frete = Correios::Frete::Calculador.new :cep_origem => Spree::CorreiosShipping::Config[:origin_zip_code],
                                                   :cep_destino => ship_zipcode_from(order),
                                                   :peso => weight_from(order),
@@ -24,12 +20,11 @@ module Spree
                                                   :codigo_empresa => Spree::CorreiosShipping::Config[:id_correios],
                                                   :senha => Spree::CorreiosShipping::Config[:password_correios]
 
-           servico = frete.calcular :sedex
+           servico = frete.calcular service
            servico.valor
         end
 
       private
-
         def weight_from(order)
           order.line_items.reduce(0) { |sum, line_item| sum + ((line_item.variant.weight * line_item.quantity) || 0) }
         end
@@ -44,11 +39,10 @@ module Spree
           end
 
           order.ship_address.zipcode
-        end
+        end     
         
         
       end
     end
-    
   end
 end

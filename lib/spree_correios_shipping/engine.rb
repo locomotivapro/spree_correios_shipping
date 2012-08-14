@@ -12,7 +12,7 @@ module SpreeCorreiosShipping
       g.test_framework :rspec
     end
     
-    initializer "spree.active_shipping.preferences", :before => :load_config_initializers do |app|
+    initializer "spree.correios_shipping.preferences", :before => :load_config_initializers do |app|
       Spree::CorreiosShipping::Config = Spree::CorreiosShippingConfiguration.new
     end
 
@@ -30,15 +30,32 @@ module SpreeCorreiosShipping
     config.to_prepare &method(:activate).to_proc
 
     initializer "spree_correios_shipping.register.calculators" do |app|
-      # Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/*.rb")].sort.each do |c|
-      #         Rails.env.production? ? require(c) : load(c)
-      #       end
-      require File.join(File.dirname(__FILE__), '../../app/models/spree/calculator/sedex/base')
+      Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/*.rb")].sort.each do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end
 
-      app.config.spree.calculators.shipping_methods << Spree::Calculator::Sedex::Base
+      app.config.spree.calculators.shipping_methods.concat([Spree::Calculator::Services::ESedex,
+                                                            Spree::Calculator::Services::ESedexExpress,
+                                                            Spree::Calculator::Services::ESedexGrupo1,
+                                                            Spree::Calculator::Services::ESedexGrupo2,
+                                                            Spree::Calculator::Services::ESedexGrupo3,
+                                                            Spree::Calculator::Services::ESedexPrioritario,
+                                                            Spree::Calculator::Services::Pac,
+                                                            Spree::Calculator::Services::PacComContrato,
+                                                            Spree::Calculator::Services::Sedex,
+                                                            Spree::Calculator::Services::Sedex10,
+                                                            Spree::Calculator::Services::SedexACobrar,
+                                                            Spree::Calculator::Services::SedexACobrarComContrato,
+                                                            Spree::Calculator::Services::SedexComContrato1,
+                                                            Spree::Calculator::Services::SedexComContrato2,
+                                                            Spree::Calculator::Services::SedexComContrato3,
+                                                            Spree::Calculator::Services::SedexComContrato4,
+                                                            Spree::Calculator::Services::SedexComContrato5,
+                                                            Spree::Calculator::Services::SedexHoje
+                                                            ])
     end
       
 
-    config.to_prepare &method(:activate).to_proc
+    # config.to_prepare &method(:activate).to_proc
   end
 end
