@@ -1,14 +1,19 @@
+module Spree::CorreiosShipping
+end
+
 module SpreeCorreiosShipping
   class Engine < Rails::Engine
     require 'spree/core'
     isolate_namespace Spree
     engine_name 'spree_correios_shipping'
 
-    config.autoload_paths += %W(#{config.root}/lib)
-
     # use rspec for tests
     config.generators do |g|
       g.test_framework :rspec
+    end
+    
+    initializer "spree.active_shipping.preferences", :before => :load_config_initializers do |app|
+      Spree::CorreiosShipping::Config = Spree::CorreiosShippingConfiguration.new
     end
 
     def self.activate      

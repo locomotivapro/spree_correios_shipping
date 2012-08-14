@@ -1,15 +1,7 @@
-require 'correios-frete'
-
 module Spree
   class Calculator < ActiveRecord::Base
     module Sedex
       class Base < Calculator
-        
-        preference :origin_zip_code, :string, :default => "03146020"
-        preference :service_code, :string, :default => ""
-        preference :id_correios, :string, :default => ""
-        preference :password_correios, :string, :default => ""
-
 
         def self.description
           "sedex"
@@ -23,14 +15,14 @@ module Spree
         end
 
         def compute(order)
-          frete = Correios::Frete::Calculador.new :cep_origem => self.preferred_origin_zip_code,
+          frete = Correios::Frete::Calculador.new :cep_origem => Spree::CorreiosShipping::Config[:origin_zip_code],
                                                   :cep_destino => ship_zipcode_from(order),
                                                   :peso => weight_from(order),
                                                   :comprimento => 30,
                                                   :largura => 15,
                                                   :altura => 2,
-                                                  :codigo_empresa => self.preferred_id_correios,
-                                                  :senha => self.preferred_password_correios
+                                                  :codigo_empresa => Spree::CorreiosShipping::Config[:id_correios],
+                                                  :senha => Spree::CorreiosShipping::Config[:password_correios]
 
            servico = frete.calcular :sedex
            servico.valor
