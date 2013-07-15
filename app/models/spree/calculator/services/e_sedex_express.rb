@@ -9,6 +9,10 @@ module Spree
           "e-Sedex Express - 81035"
         end
         
+        def available?(order)
+          super(order, :e_sedex_express)
+        end
+        
         def compute(order)
           super(order, :e_sedex_express)
         end

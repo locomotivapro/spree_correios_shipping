@@ -9,6 +9,10 @@ module Spree
           "Pac sem contrato - 41106"
         end
         
+        def available?(order)
+          super(order, :pac)
+        end
+        
         def compute(order)
           super(order, :pac)
         end

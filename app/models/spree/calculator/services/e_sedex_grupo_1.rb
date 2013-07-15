@@ -9,6 +9,10 @@ module Spree
           "e-Sedex Grupo 1 - 81868"
         end
         
+        def available?(order)
+          super(order, :e_sedex_grupo_1)
+        end
+        
         def compute(order)
           super(order, :e_sedex_grupo_1)
         end

@@ -9,6 +9,10 @@ module Spree
           "Sedex a cobrar sem contrato - 40045"
         end
         
+        def available?(order)
+          super(order, :sedex_a_cobrar)
+        end
+        
         def compute(order)
           super(order, :sedex_a_cobrar)
         end

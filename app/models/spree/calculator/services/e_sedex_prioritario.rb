@@ -9,6 +9,10 @@ module Spree
           "e-Sedex Prioritario - 81027"
         end
         
+        def available?(order)
+          super(order, :e_sedex_prioritario)
+        end
+        
         def compute(order)
           super(order, :e_sedex_prioritario)
         end

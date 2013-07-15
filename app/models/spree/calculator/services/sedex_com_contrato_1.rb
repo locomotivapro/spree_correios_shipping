@@ -9,6 +9,10 @@ module Spree
           "Sedex com Contrato 1 - 40096"
         end
         
+        def available?(order)
+          super(order, :sedex_com_contrato_1)
+        end
+        
         def compute(order)
           super(order, :sedex_com_contrato_1)
         end
