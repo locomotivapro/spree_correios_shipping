@@ -51,7 +51,8 @@ module SpreeCorreiosShipping
                                                             Spree::Calculator::Services::SedexComContrato3,
                                                             Spree::Calculator::Services::SedexComContrato4,
                                                             Spree::Calculator::Services::SedexComContrato5,
-                                                            Spree::Calculator::Services::SedexHoje
+                                                            Spree::Calculator::Services::SedexHoje,
+                                                            Spree::Calculator::Services::Overweight
                                                             ])
     end
       
