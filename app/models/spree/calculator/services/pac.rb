@@ -17,6 +17,10 @@ module Spree
           super(order, :pac)
         end
 
+        def deliver_time(order)
+          super(order, :pac)
+        end
+
       end
     end
   end

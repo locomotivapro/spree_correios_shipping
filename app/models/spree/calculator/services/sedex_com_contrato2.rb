@@ -17,6 +17,10 @@ module Spree
           super(order, :sedex_com_contrato_2)
         end
 
+        def deliver_time(order)
+          super(order, :sedex_com_contrato_2)
+        end
+
       end
     end
   end

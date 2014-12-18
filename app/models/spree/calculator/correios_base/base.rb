@@ -20,6 +20,16 @@ module Spree
           prices[service][:price]
         end
 
+        def deliver_time(calculable, service)
+          order = if calculable.is_a?(Shipment)
+            calculable.order
+          elsif calculable.is_a?(Order)
+            calculable
+          end
+          deliver = order.correios_values
+          deliver[service][:delivery_time]
+        end
+
       end
     end
   end

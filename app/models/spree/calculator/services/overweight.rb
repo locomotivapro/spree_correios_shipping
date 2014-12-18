@@ -17,6 +17,10 @@ module Spree
           0.00
         end
 
+        def deliver_time(order)
+          ""
+        end
+
       end
     end
   end
