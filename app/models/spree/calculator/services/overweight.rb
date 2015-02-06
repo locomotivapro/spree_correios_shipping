@@ -18,7 +18,7 @@ module Spree
         end
 
         def deliver_time(order)
-          ""
+          nil
         end
 
       end
