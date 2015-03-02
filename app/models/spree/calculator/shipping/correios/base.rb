@@ -66,6 +66,7 @@ module Spree
 
         def package_weight(package=nil)
           raise StandardError if package.nil? && @package_weight.nil?
+          default_weight = Spree::CorreiosShipping::Config[:default_item_weight].to_f
 
           @package_weight ||= package.contents.inject(0.0) do |total_weight, content_item|
             item_weight = content_item.variant.weight.to_f
@@ -130,7 +131,7 @@ module Spree
 
         def retrieve_rates_from_cache package, origin, destination
           Rails.cache.fetch(cache_key(package)) do
-            retrieve_rates(origin, destination, shipment_packages)
+            retrieve_rates(origin, destination, package)
           end
         end
 

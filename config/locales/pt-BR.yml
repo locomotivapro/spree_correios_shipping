@@ -1,0 +1,10 @@
+pt-BR:
+  correios_shipping_settings: 'Preferências dos Correios (ECT)'
+  spree:
+    correios_shipping_settings: 'Preferências dos Correios (ECT)'
+  correios_shipping:
+    id_correios: Identificação Correios
+    password_correios: Senha (Fornecida pela ECT)
+    services: Serviços (utilize "_" ao invés de espaços e separe por vírgula)
+    default_item_weight: Peso do item padrão (quando peso não for fornecido)
+

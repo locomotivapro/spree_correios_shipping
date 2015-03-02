@@ -30,7 +30,7 @@ module SpreeCorreiosShipping
     config.to_prepare &method(:activate).to_proc
 
     initializer "spree_correios_shipping.register.calculators" do |app|
-      Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/*.rb")].sort.each do |c|
+      Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/shipping/correios/*.rb")].sort.each do |c|
         Rails.env.production? ? require(c) : load(c)
       end
 

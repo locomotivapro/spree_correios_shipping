@@ -1,2 +1,7 @@
 en:
-  correios_shipping_settings: "Correios settings"
+  correios_shipping_settings: 'Correios Shipping Preferences'
+  correios_shipping:
+    id_correios: Correios ID
+    password_correios: Password (Supplied by ECT)
+    services: Services (separated by comma)
+    default_item_weight: Default item weight

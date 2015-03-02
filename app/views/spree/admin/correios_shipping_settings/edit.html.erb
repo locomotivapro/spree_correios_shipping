@@ -8,18 +8,20 @@
   <div data-hook="admin_correios_shipping_settings_form_fields">
     <div class="row">
       <div class="col-md-12" data-hook="preferences_fields">
-        <% @preferences.each do |key| 
+        <% @preferences.each do |key|
           type = @config.preference_type(key) %>
-        <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+
+          <%= label_tag(key, t(key, scope: :correios_shipping) + ': ') + tag(:br) if type != :boolean %>
           <%= preference_field_tag(key,@config[key], :type => type) %>
-          <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+          <%= label_tag(key, t(key, scope: :correios_shipping)) + tag(:br) if type == :boolean %>
+
         <% end %>
         </div>
       </div>
 
     </fieldset>
     <div class="form-actions" data-hook="buttons">
-      <%= button t(:update) %>
+      <%= button Spree.t('actions.update') %>
     </div>
   <% end %>
 
