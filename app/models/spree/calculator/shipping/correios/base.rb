@@ -9,6 +9,8 @@ module Spree
 
         def available?(package)
           is_package_shippable?(package)
+
+          !compute(package).nil?
         rescue Spree::ShippingError
           false
         end
@@ -27,12 +29,14 @@ module Spree
 
           origin = build_location(stock_location)
           destination = build_location(order.ship_address)
+          service_code = self.class.service_code
 
           rates_result = retrieve_rates_from_cache(package, origin, destination)
 
           return nil if rates_result.kind_of?(Spree::ShippingError)
           return nil if rates_result.empty?
-          rate = rates_result[self.class.service_code]
+          return nil unless rates_result.is_a?(Hash)
+          rate = rates_result[service_code][:price]
 
           return nil unless rate
 
@@ -40,28 +44,30 @@ module Spree
         end
 
         #def timing(line_items)
-        #order = line_items.first.order
-        ## TODO: Figure out where stock_location is supposed to come from.
-        #origin= Location.new(:country => stock_location.country.iso,
-        #:city => stock_location.city,
-        #:state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
-        #:zip => stock_location.zipcode)
-        #addr = order.ship_address
-        #destination = Location.new(:country => addr.country.iso,
-        #:state => (addr.state ? addr.state.abbr : addr.state_name),
-        #:city => addr.city,
-        #:zip => addr.zipcode)
-        #timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
-        #retrieve_timings(origin, destination, packages(order))
-        #end
-        #raise timings_result if timings_result.kind_of?(Spree::ShippingError)
-        #return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
-        #return timings_result[self.description]
+          #order = line_items.first.order
+          ## TODO: Figure out where stock_location is supposed to come from.
+          #origin= Location.new(:country => stock_location.country.iso,
+                               #:city => stock_location.city,
+                               #:state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
+                               #:zip => stock_location.zipcode)
+          #addr = order.ship_address
+          #destination = Location.new(:country => addr.country.iso,
+                                     #:state => (addr.state ? addr.state.abbr : addr.state_name),
+                                     #:city => addr.city,
+                                     #:zip => addr.zipcode)
+
+          #timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
+            #retrieve_timings(origin, destination, packages(order))
+          #end
+
+          #raise timings_result if timings_result.kind_of?(Spree::ShippingError)
+          #return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
+          #return timings_result[self.description]
         #end
 
         private
         def is_package_shippable?(package)
-          package_weight(package) <= 30.0
+          package_weight(package) <= ( Spree::CorreiosShipping::Config[:max_shipping_weight] || 30.0 ).to_f
         end
 
         def package_weight(package=nil)
@@ -102,18 +108,19 @@ module Spree
           begin
             services = Spree::CorreiosShipping::Config[:services].split(',')
             services.map! { |s| s.strip.to_sym }
-            frete = Correios::Frete::Calculador.new :cep_origem => origin.zipcode,
-                                                    :cep_destino => destination.zipcode,
-                                                    :peso => package_weight,
-                                                    :comprimento => 30,
-                                                    :largura => 15,
-                                                    :altura => 2,
-                                                    :codigo_empresa => Spree::CorreiosShipping::Config[:id_correios],
-                                                    :senha => Spree::CorreiosShipping::Config[:password_correios]
+            webservice = ::Correios::Frete::Calculador.new :cep_origem => origin.zipcode,
+              :cep_destino => destination.zipcode,
+              :peso => package_weight,
+              :comprimento => 30,
+              :largura => 15,
+              :altura => 2,
+              :codigo_empresa => Spree::CorreiosShipping::Config[:id_correios],
+              :senha => Spree::CorreiosShipping::Config[:password_correios]
 
-            response = frete.calcular(*services)
+            response = webservice.calculate(*services)
 
             unless response.nil?
+              return {response.nome.downcase.to_sym => {price: response.valor, delivery_time: response.prazo_entrega}}  unless response.is_a?(Hash)
               response_hash = {}
               services.each do |service|
                 response_hash[service] = {price: response[service].valor, delivery_time: response[service].prazo_entrega}
