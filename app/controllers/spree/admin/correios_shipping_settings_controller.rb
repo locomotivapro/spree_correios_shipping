@@ -1,6 +1,6 @@
 class Spree::Admin::CorreiosShippingSettingsController < Spree::Admin::BaseController
   def edit
-    @preferences = [:id_correios, :password_correios, :services, :default_item_weight]
+    @preferences = [:id_correios, :password_correios, :services, :default_item_weight, :max_shipping_weight, :split_shipments]
     @config = Spree::CorreiosShippingConfiguration.new
   end
 

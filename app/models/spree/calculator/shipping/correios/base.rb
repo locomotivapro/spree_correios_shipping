@@ -39,35 +39,45 @@ module Spree
           rate = rates_result[service_code][:price]
 
           return nil unless rate
+          return nil if rate.to_f == 0.0
 
           return rate
         end
 
         #def timing(line_items)
-          #order = line_items.first.order
-          ## TODO: Figure out where stock_location is supposed to come from.
-          #origin= Location.new(:country => stock_location.country.iso,
-                               #:city => stock_location.city,
-                               #:state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
-                               #:zip => stock_location.zipcode)
-          #addr = order.ship_address
-          #destination = Location.new(:country => addr.country.iso,
-                                     #:state => (addr.state ? addr.state.abbr : addr.state_name),
-                                     #:city => addr.city,
-                                     #:zip => addr.zipcode)
+        #order = line_items.first.order
+        ## TODO: Figure out where stock_location is supposed to come from.
+        #origin= Location.new(:country => stock_location.country.iso,
+        #:city => stock_location.city,
+        #:state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
+        #:zip => stock_location.zipcode)
+        #addr = order.ship_address
+        #destination = Location.new(:country => addr.country.iso,
+        #:state => (addr.state ? addr.state.abbr : addr.state_name),
+        #:city => addr.city,
+        #:zip => addr.zipcode)
 
-          #timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
-            #retrieve_timings(origin, destination, packages(order))
-          #end
+        #timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
+        #retrieve_timings(origin, destination, packages(order))
+        #end
 
-          #raise timings_result if timings_result.kind_of?(Spree::ShippingError)
-          #return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
-          #return timings_result[self.description]
+        #raise timings_result if timings_result.kind_of?(Spree::ShippingError)
+        #return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
+        #return timings_result[self.description]
         #end
 
         private
         def is_package_shippable?(package)
-          package_weight(package) <= ( Spree::CorreiosShipping::Config[:max_shipping_weight] || 30.0 ).to_f
+          if Spree::CorreiosShipping::Config[:split_shipments]
+            heavy_items = package.contents.select { |content_item| content_item.variant.weight.to_f >= max_allowed_weight }
+            heavy_items.empty?
+          else
+            package_weight(package) <= max_allowed_weight
+          end
+        end
+
+        def max_allowed_weight
+          @max_allowed_weight ||= (Spree::CorreiosShipping::Config[:max_shipping_weight] || 30.0).to_f
         end
 
         def package_weight(package=nil)
