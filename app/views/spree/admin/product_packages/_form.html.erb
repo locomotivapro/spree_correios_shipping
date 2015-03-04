@@ -1,0 +1,31 @@
+<div data-hook="admin_product_package_form_fields" class="row">
+
+  <div class="col-md-3">
+    <div data-hook="length" class="form-group">
+      <%= f.label Spree.t(:length) %>
+      <%= f.text_field :length, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div data-hook="width" class="form-group">
+      <%= f.label Spree.t(:width) %>
+      <%= f.text_field :width, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div data-hook="height" class="form-group">
+      <%= f.label Spree.t(:height) %>
+      <%= f.text_field :height, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div data-hook="weight" class="form-group">
+      <%= f.label Spree.t(:weight) %>
+      <%= f.text_field :weight, class: 'form-control' %>
+    </div>
+  </div>
+
+</div>

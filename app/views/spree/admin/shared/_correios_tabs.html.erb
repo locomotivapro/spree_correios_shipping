@@ -1,0 +1,11 @@
+<% content_for :sidebar do %>
+  <ul class="nav nav-pills nav-stacked" data-hook="admin_correios_settings_tabs">
+    <%= content_tag :li, :class => ('active' if current == 'Correios Settings') do %>
+      <%= link_to_with_icon 'edit', Spree.t(:correios_settings), edit_admin_correios_shipping_settings_path %>
+    <% end if can?(:admin, current_store) %>
+
+    <%= content_tag :li, :class => ('active' if current == 'Product Packages') do %>
+      <%= link_to_with_icon 'gift', Spree.t(:product_packages), admin_product_packages_path %>
+    <% end if can?(:admin, current_store) %>
+  </ul>
+<% end %>

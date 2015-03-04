@@ -44,28 +44,6 @@ module Spree
           return rate
         end
 
-        #def timing(line_items)
-        #order = line_items.first.order
-        ## TODO: Figure out where stock_location is supposed to come from.
-        #origin= Location.new(:country => stock_location.country.iso,
-        #:city => stock_location.city,
-        #:state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
-        #:zip => stock_location.zipcode)
-        #addr = order.ship_address
-        #destination = Location.new(:country => addr.country.iso,
-        #:state => (addr.state ? addr.state.abbr : addr.state_name),
-        #:city => addr.city,
-        #:zip => addr.zipcode)
-
-        #timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
-        #retrieve_timings(origin, destination, packages(order))
-        #end
-
-        #raise timings_result if timings_result.kind_of?(Spree::ShippingError)
-        #return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
-        #return timings_result[self.description]
-        #end
-
         private
         def is_package_shippable?(package)
           if Spree::CorreiosShipping::Config[:split_shipments]
@@ -80,17 +58,16 @@ module Spree
           @max_allowed_weight ||= (Spree::CorreiosShipping::Config[:max_shipping_weight] || 30.0).to_f
         end
 
-        def package_weight(package=nil)
-          raise StandardError if package.nil? && @package_weight.nil?
+        def package_weight(package)
           default_weight = Spree::CorreiosShipping::Config[:default_item_weight].to_f
 
-          @package_weight ||= package.contents.inject(0.0) do |total_weight, content_item|
+          package_weight = package.contents.inject(0.0) do |total_weight, content_item|
             item_weight = content_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             total_weight += item_weight * content_item.quantity
           end
 
-          @package_weight
+          package_weight
         end
 
         def cache_key(package)
@@ -115,12 +92,12 @@ module Spree
         end
 
         def retrieve_rates(origin, destination, package)
-          begin
+          #begin
             services = Spree::CorreiosShipping::Config[:services].split(',')
             services.map! { |s| s.strip.to_sym }
             webservice = ::Correios::Frete::Calculador.new :cep_origem => origin.zipcode,
               :cep_destino => destination.zipcode,
-              :peso => package_weight,
+              :peso => package_weight(package),
               :comprimento => 30,
               :largura => 15,
               :altura => 2,
@@ -138,12 +115,12 @@ module Spree
             end
 
             response_hash
-          rescue => e
-            message = e.message
-            error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
-            Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
-            raise error
-          end
+          #rescue => e
+            #message = e.message
+            #error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            #Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
+            #raise error
+          #end
         end
 
         def retrieve_rates_from_cache package, origin, destination

@@ -1,7 +1,14 @@
 pt-BR:
+  or: ou
   correios_shipping_settings: 'Preferências dos Correios (ECT)'
   spree:
+    edit_package: Editar Embalagem
     correios_shipping_settings: 'Preferências dos Correios (ECT)'
+    correios_settings: Preferências
+    product_packages: Embalagens de Produto
+    new_package: Nova Embalagem
+    no_product_package_found: Nenhuma embalagem encontrada
+    length: Comprimento
   correios_shipping:
     id_correios: Identificação Correios
     password_correios: Senha (Fornecida pela ECT)

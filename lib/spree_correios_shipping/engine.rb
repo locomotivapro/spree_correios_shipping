@@ -34,6 +34,8 @@ module SpreeCorreiosShipping
         Rails.env.production? ? require(c) : load(c)
       end
 
+      app.config.spree.stock_splitters << Spree::Stock::Splitter::CorreiosWeight
+
       app.config.spree.calculators.shipping_methods.concat([Spree::Calculator::Shipping::Correios::Pac,
                                                             #Spree::Calculator::Shipping::ESedexExpress,
                                                             #Spree::Calculator::Shipping::ESedexGrupo1,
@@ -56,7 +58,12 @@ module SpreeCorreiosShipping
       ])
     end
 
-
-    # config.to_prepare &method(:activate).to_proc
+    initializer "spree.assets.precompile", :group => :all do |app|
+      app.config.assets.precompile += %w[
+        spree/backend/product_packages/new.js
+        spree/backend/product_packages/edit.js
+        spree/backend/product_packages/index.js
+      ]
+    end
   end
 end

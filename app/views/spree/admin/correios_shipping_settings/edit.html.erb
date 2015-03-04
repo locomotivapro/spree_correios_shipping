@@ -2,6 +2,7 @@
   <%= Spree.t(:correios_shipping_settings) %>
 <% end %>
 
+<%= render 'spree/admin/shared/correios_tabs', current: 'Correios Settings' %>
 
 <%= form_tag admin_correios_shipping_settings_path, :method => :put do %>
   <fieldset class="no-border-top">
