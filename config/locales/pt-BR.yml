@@ -12,7 +12,7 @@ pt-BR:
   correios_shipping:
     id_correios: Identificação Correios
     password_correios: Senha (Fornecida pela ECT)
-    services: Serviços (utilize "_" ao invés de espaços e separe por vírgula)
+    services: Serviços (utilize "_" ao invés de espaços e separe por vírgula). Não altera a menos que tenha certeza do que está fazendo!
     default_item_weight: Peso do item padrão (quando peso não for fornecido)
     split_shipments: Permitir criar mais de um pacote para envio (Se o pedido passar das confs máximas da ECT)
     max_shipping_weight: Peso máximo aceito pela ECT

@@ -1,6 +1,6 @@
 module Spree
   module Calculator::Shipping
-    module Services
+    module Correios
       class SedexACobrarComContrato < Spree::Calculator::Shipping::Correios::Base
 
         def self.description

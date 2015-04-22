@@ -91,10 +91,17 @@ module Spree
                        address.zipcode)
         end
 
+        def map_from_shipping_methods
+          available_shipping_methods = Spree::ShippingMethod.all
+          correios_shipping_methods = available_shipping_methods.select { |sm| sm.calculator.type.constantize.superclass == Spree::Calculator::Shipping::Correios::Base }
+          correios_shipping_methods.map! { |sm| sm.calculator.type.constantize.service_code }
+        end
+
         def retrieve_rates(origin, destination, package)
           #begin
             services = Spree::CorreiosShipping::Config[:services].split(',')
-            services.map! { |s| s.strip.to_sym }
+            services = map_from_shipping_methods if services.empty?
+            services.map! { |s| s.is_a?(Symbol) ? s : s.strip.to_sym }
             webservice = ::Correios::Frete::Calculador.new :cep_origem => origin.zipcode,
               :cep_destino => destination.zipcode,
               :peso => package_weight(package),
