@@ -5,6 +5,8 @@ SpreeCorreiosShipping
 This is a gem to allow use Correios service for shipping methods in spree
 Currently just tested and working with spree > 3.1
 
+There is a 1.2 spree implementation, just use 1-2-stable branch.
+
 ## Installation
 
 1. Add the following to your Gemfile
