@@ -10,5 +10,5 @@
 # '0.40.x' => { :tag => 'v1.0.0', :version => '1.0.0' }
 
 '3.0.x' => { :branch => '3-0-stable'}
-'1.2.x' => { :branch => '1-2-stab'}
+'1.2.x' => { :branch => '1-2-stable'}
 

@@ -1,18 +1,21 @@
 # encoding: UTF-8
+$:.push File.expand_path("../lib", __FILE__)
+require 'spree_correios_shipping/version'
+
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_correios_shipping'
-  s.version     = '1.1.8'
+  s.version     = SpreeCorreiosShipping::VERSION
   s.summary     = 'Gem for spree and correios'
   s.description = 'Gem for spree and brazilian carrier correios'
-  s.required_ruby_version = '>= 1.8.7'
+  s.required_ruby_version = '>= 1.9'
 
    s.author    = 'Denis Tierno, Fabio Esposito'
    s.email     = 'contato@locomotiva.pro'
    s.homepage  = 'http://locomotiva.pro'
 
-  #s.files       = `git ls-files`.split("\n")
-  #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.files       = `git ls-files`.split("\n")
+  s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_path = 'lib'
   s.requirements << 'none'
 
