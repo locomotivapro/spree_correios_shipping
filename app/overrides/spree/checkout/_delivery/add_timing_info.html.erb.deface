@@ -1,0 +1,2 @@
+<!-- insert_after ".rate-cost" -->
+<span class="rate-timing"><%= rate.timing_info %></span>
