@@ -125,7 +125,7 @@ module Spree
             response = webservice.calculate(*services)
 
             unless response.nil?
-              return {response.nome.downcase.to_sym => {price: response.valor, delivery_time: response.prazo_entrega}}  unless response.is_a?(Hash)
+              return {response.nome.downcase.to_sym => {price: response.valor, timing_info: { days: response[service].prazo_entrega, info: response[service].msg_erro }}}  unless response.is_a?(Hash)
               response_hash = {}
               services.each do |service|
                 response_hash[service] = {price: response[service].valor, timing_info: { days: response[service].prazo_entrega, info: response[service].msg_erro } }
