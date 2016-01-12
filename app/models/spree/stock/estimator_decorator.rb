@@ -7,7 +7,7 @@ module Spree
         cost = calculator.compute(package)
 
         timing_info = if calculator.respond_to? :timing_info
-                        calculator.timing_info(package)
+                        calculator.timing_info(package) || {}
                       else
                         {}
                       end
