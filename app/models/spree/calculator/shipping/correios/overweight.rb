@@ -8,14 +8,15 @@ module Spree
         end
 
         def available?(package)
-          package_weight > 30 ? true : false
+          max_weight = (Spree::CorreiosShipping::Config[:max_shipping_weight] || 30.0).to_f
+          package_weight(package) >= max_weight ? true : false
         end
 
         def compute_package(package)
           0.00
         end
 
-        def deliver_time(package)
+        def timing_info(package)
           nil
         end
 
