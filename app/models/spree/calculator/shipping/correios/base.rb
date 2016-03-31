@@ -109,7 +109,7 @@ module Spree
         end
 
         def retrieve_rates(origin, destination, package)
-          #begin
+          begin
             services = Spree::CorreiosShipping::Config[:services].split(',')
             services = map_from_shipping_methods if services.empty?
             services.map! { |s| s.is_a?(Symbol) ? s : s.strip.to_sym }
@@ -133,12 +133,12 @@ module Spree
             end
 
             response_hash
-          #rescue => e
-            #message = e.message
-            #error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
-            #Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
-            #raise error
-          #end
+          rescue => e
+            message = e.message
+            error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
+            raise error
+          end
         end
 
 
