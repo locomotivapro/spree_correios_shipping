@@ -29,12 +29,12 @@ module SpreeCorreiosShipping
     config.autoload_paths += %W(#{config.root}/lib)
     config.to_prepare &method(:activate).to_proc
 
-    initializer "spree_correios_shipping.register.calculators" do |app|
+    initializer "spree_correios_shipping.register.calculators", after: 'spree.register.calculators' do |app|
       Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/shipping/correios/*.rb")].sort.each do |c|
         Rails.env.production? ? require(c) : load(c)
       end
 
-      app.config.spree.stock_splitters << Spree::Stock::Splitter::CorreiosWeight
+      #app.config.spree.stock_splitters << Spree::Stock::Splitter::CorreiosWeight
 
       app.config.spree.calculators.shipping_methods.concat([Spree::Calculator::Shipping::Correios::ESedex,
                                                             Spree::Calculator::Shipping::Correios::ESedexExpress,
