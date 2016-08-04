@@ -4,9 +4,9 @@ module Spree
       class CorreiosWeight < Spree::Stock::Splitter::Base
         attr_reader :packer, :next_splitter
 
-        cattr_accessor :threshold do
-          Spree::CorreiosShipping::Config[:max_shipping_weight]
-        end
+        #cattr_accessor :threshold do
+          #Spree::CorreiosShipping::Config[:max_shipping_weight]
+        #end
 
         def split(packages)
           packages.each do |package|
