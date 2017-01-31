@@ -24,6 +24,9 @@ module SpreeCorreiosShipping
       Dir.glob(File.join(File.dirname(__FILE__), "../../app/**/*_decorator*.rb")) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
+
+      box_packer = File.join(File.dirname(__FILE__), 'box_packer.rb')
+      Rails.configuration.cache_classes ? require(box_packer) : load(box_packer)
     end
 
     config.autoload_paths += %W(#{config.root}/lib)

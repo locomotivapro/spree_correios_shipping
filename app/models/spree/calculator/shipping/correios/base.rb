@@ -98,36 +98,104 @@ module Spree
         end
 
         def retrieve_rates(origin, destination, package)
+          shipment_box = choose_best_box_for(package)
+
           #begin
-            services = Spree::CorreiosShipping::Config[:services].split(',')
-            services = map_from_shipping_methods if services.empty?
-            services.map! { |s| s.is_a?(Symbol) ? s : s.strip.to_sym }
-            webservice = ::Correios::Frete::Calculador.new :cep_origem => origin.zipcode,
-              :cep_destino => destination.zipcode,
-              :peso => package_weight(package),
-              :comprimento => 30,
-              :largura => 15,
-              :altura => 2,
-              :codigo_empresa => Spree::CorreiosShipping::Config[:id_correios],
-              :senha => Spree::CorreiosShipping::Config[:password_correios]
+          services = Spree::CorreiosShipping::Config[:services].split(',')
+          services = map_from_shipping_methods if services.empty?
+          services.map! { |s| s.is_a?(Symbol) ? s : s.strip.to_sym }
+          webservice = ::Correios::Frete::Calculador.new :cep_origem => origin.zipcode,
+            :cep_destino => destination.zipcode,
+            :peso => package_weight(package),
+            :comprimento => shipment_box[:width],
+            :largura => shipment_box[:length],
+            :altura => shipment_box[:height],
+            :codigo_empresa => Spree::CorreiosShipping::Config[:id_correios],
+            :senha => Spree::CorreiosShipping::Config[:password_correios]
 
-            response = webservice.calculate(*services)
+          response = webservice.calculate(*services)
 
-            unless response.nil?
-              return {response.nome.downcase.to_sym => {price: response.valor, delivery_time: response.prazo_entrega}}  unless response.is_a?(Hash)
-              response_hash = {}
-              services.each do |service|
-                response_hash[service] = {price: response[service].valor, delivery_time: response[service].prazo_entrega}
-              end
+          unless response.nil?
+            return {response.nome.downcase.to_sym => {price: response.valor, delivery_time: response.prazo_entrega}}  unless response.is_a?(Hash)
+            response_hash = {}
+            services.each do |service|
+              response_hash[service] = {price: response[service].valor, delivery_time: response[service].prazo_entrega}
+            end
+          end
+
+          response_hash
+          #rescue => e
+          #message = e.message
+          #error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+          #Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
+          #raise error
+          #end
+        end
+
+        def width_for(variant)
+          if variant.width.nil?
+            Spree::CorreiosShipping::Config[:default_item_width]
+          else
+            (variant.width * 100).to_i
+          end
+        end
+
+        def height_for(variant)
+          if variant.width.nil?
+            Spree::CorreiosShipping::Config[:default_item_height]
+          else
+            (variant.height * 100).to_i
+          end
+        end
+
+        def depth_for(variant)
+          if variant.width.nil?
+            Spree::CorreiosShipping::Config[:default_item_depth]
+          else
+            (variant.depth * 100).to_i
+          end
+        end
+
+        def choose_best_box_for(package)
+          available_boxes = Spree::ProductPackage.smallest_to_biggest
+          selected_package = nil
+
+          available_boxes.each do |box|
+            items = package.contents.inject([]) do |item_array, item|
+              variant = item.variant
+              item_array << { dimensions: [width_for(variant), height_for(variant), depth_for(variant)] }
             end
 
-            response_hash
-          #rescue => e
-            #message = e.message
-            #error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
-            #Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
-            #raise error
-          #end
+            current_package = pack(box, items)
+
+            if !current_package.nil? && current_package.length == 1
+              selected_package = box
+              break
+            end
+          end
+
+          if selected_package.nil?
+            {
+              width: Spree::CorreiosShipping::Config[:default_width],
+              height: Spree::CorreiosShipping::Config[:default_height],
+              length: Spree::CorreiosShipping::Config[:default_length]
+            }
+          else
+            {
+              width: selected_package.width,
+              height: selected_package.height,
+              length: selected_package.length
+            }
+          end
+        end
+
+        def pack(box, items)
+          ::BoxPacker.pack(
+            container: { dimensions: [box.width, box.height, box.length] },
+            items: items
+          )
+        rescue
+          nil
         end
 
         def retrieve_rates_from_cache package, origin, destination
@@ -136,29 +204,6 @@ module Spree
           end
         end
 
-        #def retrieve_timings(origin, destination, packages)
-        #begin
-        #if carrier.respond_to?(:find_time_in_transit)
-        #response = carrier.find_time_in_transit(origin, destination, packages)
-        #return response
-        #end
-        #rescue ActiveMerchant::Shipping::ResponseError => re
-        #if re.response.is_a?(ActiveMerchant::Shipping::Response)
-        #params = re.response.params
-        #if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
-        #message = params["Response"]["Error"]["ErrorDescription"]
-        #else
-        #message = re.message
-        #end
-        #else
-        #message = re.message
-        #end
-
-        #error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
-        #Rails.cache.write @cache_key+"-timings", error #write error to cache to prevent constant re-lookups
-        #raise error
-        #end
-        #end
       end
     end
   end

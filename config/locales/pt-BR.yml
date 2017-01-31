@@ -16,4 +16,10 @@ pt-BR:
     default_item_weight: Peso do item padrão (quando peso não for fornecido)
     split_shipments: Permitir criar mais de um pacote para envio (Se o pedido passar das confs máximas da ECT)
     max_shipping_weight: Peso máximo aceito pela ECT
+    default_item_width: Largura padrão de um produto em cm
+    default_item_height: Altura padrão de um produto em cm
+    default_item_depth: Profundidade padrão de um produto em cm
+    default_width: Largura padrão de caixa em cm (quando nenhuma caixa estiver disponível)
+    default_height: Altura padrão de caixa em cm (quando nenhuma caixa estiver disponível)
+    default_depth: Profundidade padrão de caixa em cm (quando nenhuma caixa estiver disponível)
 
