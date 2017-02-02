@@ -13,5 +13,5 @@ class Spree::CorreiosShippingConfiguration < Spree::Preferences::Configuration
   preference :default_item_depth, :float, default: 0.2
   preference :default_width, :integer, default: 15
   preference :default_height, :integer, default: 20
-  preference :default_depth, :integer, default: 5
+  preference :default_length, :integer, default: 5
 end
