@@ -67,7 +67,7 @@ module Spree
             total_weight += item_weight
           end
 
-          package_weight
+          package_weight.round(2)
         end
 
         def cache_key(package)
