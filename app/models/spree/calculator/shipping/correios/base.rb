@@ -64,7 +64,7 @@ module Spree
           package_weight = package.contents.inject(0.0) do |total_weight, content_item|
             item_weight = content_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
-            total_weight += item_weight * content_item.quantity
+            total_weight += item_weight
           end
 
           package_weight
