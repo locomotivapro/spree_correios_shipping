@@ -47,6 +47,7 @@ module SpreeCorreiosShipping
                                                             Spree::Calculator::Shipping::Correios::ESedexPrioritario,
                                                             Spree::Calculator::Shipping::Correios::Pac,
                                                             Spree::Calculator::Shipping::Correios::PacComContrato,
+                                                            Spree::Calculator::Shipping::Correios::PacEcommerce,
                                                             Spree::Calculator::Shipping::Correios::Sedex,
                                                             Spree::Calculator::Shipping::Correios::Sedex10,
                                                             Spree::Calculator::Shipping::Correios::SedexACobrar,
@@ -56,6 +57,7 @@ module SpreeCorreiosShipping
                                                             Spree::Calculator::Shipping::Correios::SedexComContrato3,
                                                             Spree::Calculator::Shipping::Correios::SedexComContrato4,
                                                             Spree::Calculator::Shipping::Correios::SedexComContrato5,
+                                                            Spree::Calculator::Shipping::Correios::SedexEcommerce,
                                                             Spree::Calculator::Shipping::Correios::SedexHoje,
                                                             Spree::Calculator::Shipping::Correios::Overweight
       ])
