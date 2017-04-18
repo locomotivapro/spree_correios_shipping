@@ -2,6 +2,8 @@ pt-BR:
   or: ou
   correios_shipping_settings: 'Preferências dos Correios (ECT)'
   spree:
+    pre_delivery_days_info: 'Prazo:'
+    delivery_days: dia(s)
     edit_package: Editar Embalagem
     correios_shipping_settings: 'Preferências dos Correios (ECT)'
     correios_settings: Preferências

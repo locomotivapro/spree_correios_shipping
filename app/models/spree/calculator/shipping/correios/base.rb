@@ -24,19 +24,14 @@ module Spree
         end
 
         def compute_package(package)
-          order = package.order
-          stock_location = package.stock_location
-
-          origin = build_location(stock_location)
-          destination = build_location(order.ship_address)
           service_code = self.class.service_code
+          retrieve_correios_response(package)
 
-          rates_result = retrieve_rates_from_cache(package, origin, destination)
+          return nil if @rates_result.kind_of?(Spree::ShippingError)
+          return nil if @rates_result.empty?
+          return nil unless @rates_result.is_a?(Hash)
 
-          return nil if rates_result.kind_of?(Spree::ShippingError)
-          return nil if rates_result.empty?
-          return nil unless rates_result.is_a?(Hash)
-          rate = rates_result[service_code][:price]
+          rate = @rates_result[service_code][:price]
 
           return nil unless rate
           return nil if rate.to_f == 0.0
@@ -44,7 +39,24 @@ module Spree
           return rate
         end
 
+        def timing_info(package)
+          @rates_result ||= retrieve_correios_response(package)
+          service_code = self.class.service_code
+          @rates_result[service_code][:timing_info]
+        end
+
         private
+        def retrieve_correios_response(package)
+          order = package.order
+          stock_location = package.stock_location
+
+          origin = build_location(stock_location)
+          destination = build_location(order.ship_address)
+
+          @rates_result = retrieve_rates_from_cache(package, origin, destination)
+        end
+
+
         def is_package_shippable?(package)
           if Spree::CorreiosShipping::Config[:split_shipments]
             heavy_items = package.contents.select { |content_item| content_item.variant.weight.to_f >= max_allowed_weight }
@@ -116,10 +128,10 @@ module Spree
           response = webservice.calculate(*services)
 
           unless response.nil?
-            return {response.nome.downcase.to_sym => {price: response.valor, delivery_time: response.prazo_entrega}}  unless response.is_a?(Hash)
+            return {response.nome.downcase.to_sym => {price: response.valor, timing_info: { days: response[service].prazo_entrega, info: response[service].msg_erro }}}  unless response.is_a?(Hash)
             response_hash = {}
             services.each do |service|
-              response_hash[service] = {price: response[service].valor, delivery_time: response[service].prazo_entrega}
+              response_hash[service] = {price: response[service].valor, timing_info: { days: response[service].prazo_entrega, info: response[service].msg_erro } }
             end
           end
 
