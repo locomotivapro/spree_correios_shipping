@@ -146,25 +146,25 @@ module Spree
 
         def width_for(variant)
           if variant.width.nil?
-            Spree::CorreiosShipping::Config[:default_item_width]
+            Spree::CorreiosShipping::Config[:default_item_width].to_f
           else
-            (variant.width * 100).to_i
+            (variant.width * 100).to_f
           end
         end
 
         def height_for(variant)
           if variant.width.nil?
-            Spree::CorreiosShipping::Config[:default_item_height]
+            Spree::CorreiosShipping::Config[:default_item_height].to_f
           else
-            (variant.height * 100).to_i
+            (variant.height * 100).to_f
           end
         end
 
         def depth_for(variant)
           if variant.width.nil?
-            Spree::CorreiosShipping::Config[:default_item_depth]
+            Spree::CorreiosShipping::Config[:default_item_depth].to_f
           else
-            (variant.depth * 100).to_i
+            (variant.depth * 100).to_f
           end
         end
 
