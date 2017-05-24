@@ -8,9 +8,11 @@ module Spree
       class Base < ShippingCalculator
 
         def available?(package)
-          is_package_shippable?(package)
-
-          !compute(package).nil?
+          if is_package_shippable?(package) && box_for(package)
+            !compute(package).nil?
+          else
+            false
+          end
         rescue Spree::ShippingError
           false
         end
@@ -199,6 +201,27 @@ module Spree
               length: selected_package.length
             }
           end
+        end
+
+        def box_for(package)
+          available_boxes = Spree::ProductPackage.smallest_to_biggest
+          box_for_package = nil
+
+          available_boxes.each do |box|
+            items = package.contents.inject([]) do |item_array, item|
+              variant = item.variant
+              item_array << { dimensions: [width_for(variant), height_for(variant), depth_for(variant)] }
+            end
+
+            current_package = pack(box, items)
+
+            if !current_package.nil? && current_package.length == 1
+              box_for_package = box
+              break
+            end
+          end
+
+          box_for_package
         end
 
         def pack(box, items)

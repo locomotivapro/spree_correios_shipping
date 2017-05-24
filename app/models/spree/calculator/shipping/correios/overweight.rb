@@ -4,18 +4,18 @@ module Spree
       class Overweight < Spree::Calculator::Shipping::Correios::Base
 
         def self.description
-          "Acima de 30kg"
+          "Acima de 30kg ou fora das medidas máximas"
         end
 
         def available?(package)
-          package_weight > 30 ? true : false
+          !is_package_shippable?(package) || !box_for(package)
         end
 
         def compute_package(package)
           0.00
         end
 
-        def deliver_time(package)
+        def timing_info(package)
           nil
         end
 
